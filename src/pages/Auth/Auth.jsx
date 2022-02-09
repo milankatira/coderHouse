@@ -21,8 +21,7 @@ const Auth = () => {
 
   return (
     <div>
-      hjk
-      <Step onClick={onNext} />
+      <Step onClick={()=>onNext()} />
     </div>
   );
 };
