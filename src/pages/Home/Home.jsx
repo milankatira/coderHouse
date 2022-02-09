@@ -13,7 +13,7 @@ const Home = () => {
 
   const history = useHistory();
   const startRegister = () => {
-    history.push("/register");
+    history.push("/auth");
   };
   
   return (
@@ -25,15 +25,12 @@ const Home = () => {
         </p>
 
         <Button
-          text="Get Your userName"
+          text="Let`s Go"
           icon="arrow-forward"
           onClick={startRegister}
         />
         <div className={styles.signInWrapper}>
           <span className={styles.hasInvite}>Have an invite text?</span>
-          <Link style={signIn_Style} to="/login">
-            Sign in
-          </Link>
         </div>
       </Card>
     </div>
