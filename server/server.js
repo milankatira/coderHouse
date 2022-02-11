@@ -7,9 +7,9 @@ const PORT = process.env.PORT || 5000;
 
 const router=require('./routes');
 
-app.use(router);
+app.use(express.json())
 
-app.use(express.json());
+app.use(router);
 
 app.get("/", (req, res) => {
   res.send("hello");

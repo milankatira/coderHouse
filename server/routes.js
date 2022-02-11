@@ -1,5 +1,6 @@
 const router=require('express').Router();
-const Authcontroller=require('./controllers/auth')
-router.post('/api/send-otp',Authcontroller.sendOtp)
+const authController=require('./controllers/auth')
+
+router.post('/api/send-otp', authController.sendOtp);
 
 module.exports=router;
