@@ -1,5 +1,7 @@
 const crypto = require("crypto");
 
+const HashService = require("../services/Hash");
+
 const smsSid = process.env.SMS_SID;
 
 const smsAuthToken = process.env.SMS_AUTH_TOKEN;
@@ -14,15 +16,19 @@ class otpService {
     return otp;
   }
 
-  async sendBySms(phone,otp) {
+  async sendBySms(phone, otp) {
     return await twilio.messages.create({
       to: phone,
-      from:process.env.SMS_FROM_NUMBER,
+      from: process.env.SMS_FROM_NUMBER,
       body: `Your coderHouse OTP is ${otp}`,
     });
   }
 
-  verifyOtp() {}
+  verifyOtp(hashOtp, data) {
+    let computedHash = HashService.hashOtp(data);
+
+    return computedHash === hashOtp;
+  }
 }
 
 module.exports = new otpService();

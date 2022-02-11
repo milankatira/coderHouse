@@ -1,5 +1,10 @@
 const otpService = require("../services/otp");
+
 const HashService = require("../services/Hash");
+
+const UserService = require("../services/user");
+
+const TokenService = require("../services/token");
 
 class AuthController {
   async sendOtp(req, res) {
@@ -30,6 +35,52 @@ class AuthController {
       console.log(err);
       res.status(500).json({ message: "Error sending OTP!" });
     }
+  }
+
+  async verifyOtp(req, res) {
+    const { otp, hash, phone } = req.body;
+
+    if (!otp || !hash || !phone) {
+      return res.status(400).json({ message: "all field required!" });
+    }
+
+    const [hashOtp, expires] = hash.split(".");
+
+    if (Date.now() > +expires) {
+      res.status(400).json({ message: "OTP expired!" });
+    }
+
+    const data = `${phone}.${otp}.${expires}`;
+
+    const isValid = otpService.verifyOtp(hashOtp, data);
+
+    if (!isValid) {
+      return res.status(400).json({ message: "Invalid OTP!" });
+    }
+
+    let user;
+    try {
+      user = await UserService.findUser({ phone });
+
+      if (!user) {
+        await UserService.createUser({ phone });
+      }
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({
+        message: "db error",
+      });
+    }
+
+    //token
+    const { accessToken, refreshToken } = TokenService.generateToken();
+
+    res.cookie("refreshToken", refreshToken, {
+      maxAge: 1000 * 60 * 60 * 24 * 30,
+      httpOnly: true,
+    });
+
+    res.json({ accessToken });
   }
 }
 
