@@ -16,6 +16,7 @@ class TokenService {
     });
     return { accessToken, refreshToken };
   }
+
   async storeRefreshToken(token, userId) {
     try {
       await RefreshModel.create({
@@ -30,6 +31,24 @@ class TokenService {
   async verifyAccessToken(token) {
     return jwt.verify(token, accessTokenSecret);
   }
+
+  async verifyRefreshToken(refreshToken) {
+    return jwt.verify(refreshToken, refreshTokenSecret);
+  }
+
+  async findRefreshToken(userId, refreshToken) {
+    return await RefreshModel.findOne({
+      _id: userId,
+      token: refreshToken,
+    });
+  }
+
+  async updateRefreshToken(userId, refreshToken) {
+    return await RefreshModel.updateOne(
+        { userId: userId },
+        { token: refreshToken }
+    );
+}
 }
 
 module.exports = new TokenService();

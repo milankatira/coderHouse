@@ -12,6 +12,7 @@ function App() {
     <BrowserRouter>
       <Navigation />
       <Switch>
+        
         <GuestRoute path="/" exact>
           <Home />
         </GuestRoute>
@@ -23,9 +24,11 @@ function App() {
         <SemiProtectedRoute>
           <Route exact path="/activate" component={Activate} />
         </SemiProtectedRoute>
+
         <ProtectedRoute>
           <Route exact path="/rooms" component={Rooms} />
         </ProtectedRoute>
+
       </Switch>
     </BrowserRouter>
   );
