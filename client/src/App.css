@@ -38,3 +38,11 @@ body {
   color: white;
   font-family: "Nunito Sans", sans-serif;
 }
+
+.cardWrapper{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 140px);
+
+}
