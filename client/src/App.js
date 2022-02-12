@@ -5,7 +5,7 @@ import Navigation from "./components/common/Navigation/Navigation";
 import Auth from "./pages/Auth/Auth";
 import Activate from "./pages/Activate/Activate";
 import Rooms from "./pages/Rooms/Rooms";
-const isAuth = false;
+import { useSelector } from "react-redux";
 
 function App() {
   return (
@@ -32,6 +32,7 @@ function App() {
 }
 
 const GuestRoute = ({ children, ...rest }) => {
+  const { isAuth } = useSelector((state) => state.auth);
   return (
     <Route
       {...rest}
@@ -39,7 +40,7 @@ const GuestRoute = ({ children, ...rest }) => {
         return isAuth ? (
           <Redirect
             to={{
-              pathname: "/rooms",
+              pathname: "/activate",
               state: { from: location },
             }}
           />
@@ -51,9 +52,9 @@ const GuestRoute = ({ children, ...rest }) => {
   );
 };
 
-const user = { activated: false };
-console.log(isAuth && !user.activated);
 const SemiProtectedRoute = ({ children, ...rest }) => {
+  const { user, isAuth } = useSelector((state) => state.auth);
+console.log(isAuth && !user.activated)
   return (
     <Route
       {...rest}
@@ -81,6 +82,8 @@ const SemiProtectedRoute = ({ children, ...rest }) => {
 };
 
 const ProtectedRoute = ({ children, ...rest }) => {
+  const { user, isAuth } = useSelector((state) => state.auth);
+
   return (
     <Route
       {...rest}

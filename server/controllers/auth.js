@@ -6,6 +6,8 @@ const UserService = require("../services/user");
 
 const TokenService = require("../services/token");
 
+const UserDto = require("../dtos/user");
+
 class AuthController {
   async sendOtp(req, res) {
     const { phone } = req.body;
@@ -26,10 +28,11 @@ class AuthController {
     const hash = HashService.hashOtp(data);
 
     try {
-      await otpService.sendBySms(phone, otp);
+      // await otpService.sendBySms(phone, otp);
       return res.status(200).json({
         hash: `${hash}.${expires}`,
         phone,
+        otp,
       });
     } catch (err) {
       console.log(err);
@@ -59,28 +62,30 @@ class AuthController {
     }
 
     let user;
+
     try {
       user = await UserService.findUser({ phone });
-
       if (!user) {
-        await UserService.createUser({ phone });
+        user = await UserService.createUser({ phone });
       }
     } catch (err) {
       console.log(err);
-      res.status(500).json({
-        message: "db error",
-      });
+      res.status(500).json({ message: "Db error" });
     }
 
-    //token
-    const { accessToken, refreshToken } = TokenService.generateToken();
+    const { accessToken, refreshToken } = TokenService.generateToken({
+      _id: user._id,
+      activated: false,
+    });
 
     res.cookie("refreshToken", refreshToken, {
       maxAge: 1000 * 60 * 60 * 24 * 30,
       httpOnly: true,
     });
 
-    res.json({ accessToken });
+    const userData = new UserDto(user);
+
+    res.json({ accessToken, user:userData });
   }
 }
 
